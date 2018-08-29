@@ -46,24 +46,6 @@ function installModule(moduleName) {
   }
 }
 
-var startup = require('/opt/qewd/mapped/startup');
-var userDefined = startup.userDefined;
-if (!userDefined && fs.existsSync('/opt/qewd/mapped/userDefined.json')) {
-  userDefined = require('/opt/qewd/mapped/userDefined.json');
-}
-
-if (startup.debug) {
-  debug.enable(startup.debug)
-}
-
-if (userDefined && userDefined.startup_commands) {
-  console.log('Running custom startup commands:');
-  userDefined.startup_commands.forEach(function(cmnd) {
-   console.log(cmnd);
-   child_process.execSync(cmnd, {stdio:[0,1,2]});
-  });
-}
-
 var npmModules;
 if (fs.existsSync('/opt/qewd/mapped/install_modules.json')) {
   npmModules = require('/opt/qewd/mapped/install_modules.json');
@@ -71,6 +53,24 @@ if (fs.existsSync('/opt/qewd/mapped/install_modules.json')) {
     console.log('\nInstalling module ' + moduleName);
     installModule(moduleName);
     console.log('\n' + moduleName + ' installed');
+  });
+}
+
+var startup = require('/opt/qewd/mapped/startup');
+var userDefined = startup.userDefined;
+if (!userDefined && fs.existsSync('/opt/qewd/mapped/userDefined.json')) {
+  userDefined = require('/opt/qewd/mapped/userDefined.json');
+}
+
+if (startup.debug) {
+  debug.enable(startup.debug);
+}
+
+if (userDefined && userDefined.startup_commands) {
+  console.log('Running custom startup commands:');
+  userDefined.startup_commands.forEach(function(cmnd) {
+   console.log(cmnd);
+   child_process.execSync(cmnd, {stdio:[0,1,2]});
   });
 }
 
