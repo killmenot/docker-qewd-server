@@ -5,7 +5,7 @@
 # M/Gateway Developments Ltd
 # 20 June 2018
 
-FROM node:carbon
+FROM node:jessie
 
 RUN apt-get update && apt-get install -y \
   build-essential \

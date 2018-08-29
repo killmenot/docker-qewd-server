@@ -30,6 +30,7 @@
 
 var fs = require('fs');
 var module_exists = require('module-exists');
+var debug = require('debug');
 
 var child_process = require('child_process');
 
@@ -49,6 +50,10 @@ var startup = require('/opt/qewd/mapped/startup');
 var userDefined = startup.userDefined;
 if (!userDefined && fs.existsSync('/opt/qewd/mapped/userDefined.json')) {
   userDefined = require('/opt/qewd/mapped/userDefined.json');
+}
+
+if (startup.debug) {
+  debug.enable(startup.debug)
 }
 
 if (userDefined && userDefined.startup_commands) {
@@ -122,9 +127,19 @@ catch(err) {
 //  it may return an error, so wrap in a try/catch
 
 try {
+  console.log('Running down YottaDB...');
   child_process.execSync(config.database.params.ydb_env.ydb_dist + '/mupip rundown -region DEFAULT', {stdio:[0,1,2]});
+  child_process.execSync(config.database.params.ydb_env.ydb_dist + '/mupip rundown -region qewdreg', {stdio:[0,1,2]});
+  //child_process.execSync(config.database.params.ydb_env.ydb_dist + '/mupip rundown -region "*"', {stdio:[0,1,2]});
+  console.log('Rundown completed');
 }
-catch(err) {}
+catch(err) {
+  console.log('Error running down YottaDB: ' + err);
+  console.log('Recovering journal...');
+  child_process.execSync(config.database.params.ydb_env.ydb_dist + '/mupip journal -recover -backward /root/.yottadb/r1.22_x86_64/g/yottadb.mjl', {stdio:[0,1,2]});
+  console.log('Journal recovered');
+
+}
 
 // ready to start QEWD now
 
@@ -144,5 +159,6 @@ if (userDefined) {
 if (startup.onStarted) {
   startup.onStarted.call(q);
 }
+
 
 
