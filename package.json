@@ -8,10 +8,10 @@
     "start": "NODE_ENV=test TEST_ENV=integration NODE_PATH=/opt/qewd/mapped node qewd.js"
   },
   "dependencies": {
-    "debug": "^3.1.0",
+    "debug": "^4.0.1",
     "qewd": "killmenot/qewd#tests",
     "qewd-monitor": "",
-    "qewd-require-json": "^1.0.0",
+    "qewd-require-json": "^1.2.1",
     "qewd-transform-json": "",
     "ewd-client": "",
     "request": ""
